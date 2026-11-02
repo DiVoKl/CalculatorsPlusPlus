@@ -5,7 +5,6 @@ from .base_calculator import BaseCalculator
 from .Differentiation import Differentiation
 from .Limits import Limits
 
-
 class Fanalyser(BaseCalculator):
     def __init__(self, expr_str: str, symbols_str: str = "x y z t"):
         super().__init__(expr_str, symbols_str)

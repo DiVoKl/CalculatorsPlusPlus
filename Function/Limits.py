@@ -1,5 +1,6 @@
 import sympy as sp
-from base_calculator import BaseCalculator
+from typing import Dict, Any
+from .base_calculator import BaseCalculator
 
 class Limits(BaseCalculator):
     def calculate(self, point, var=None, direction="+"):

@@ -13,6 +13,54 @@ class FInvestigator(BaseCalculator):
         self.limit_engine = Limits(expr_str, symbols_str)
 
     @safe_step
+    def calculate(self, **kwargs) -> Dict[str, Any]:
+        # 1. Domain & Intercepts
+        domain = continuous_domain(self.expr, self.x, sp.S.Reals)
+        y_intercept = self.expr.subs(self.x, 0) if 0 in domain else "Undefined"
+        x_intercepts = sp.solve(self.expr, self.x)
+
+        # 2. Symmetry Check
+        f_neg_x = self.expr.subs(self.x, -self.x)
+        if sp.simplify(f_neg_x - self.expr) == 0:
+            symmetry = "Even (Symmetric about y-axis)"
+        elif sp.simplify(f_neg_x + self.expr) == 0:
+            symmetry = "Odd (Symmetric about origin)"
+        else:
+            symmetry = "Neither Even nor Odd"
+
+        # 3. Limits / Horizontal Asymptotes
+        lim_pos = self.limit_engine.calculate(sp.oo, var=self.x)
+        lim_neg = self.limit_engine.calculate(-sp.oo, var=self.x)
+
+        # 4. First Derivative & Critical Points
+        d1_res = self.diff_engine.calculate(var=self.x, order=1)
+        d1_expr = d1_res.get("sympy_obj") if isinstance(d1_res, dict) and d1_res.get("success") else None
+        critical_points = sp.solve(d1_expr, self.x) if d1_expr is not None else []
+
+        # 5. Second Derivative & Inflection Points
+        d2_res = self.diff_engine.calculate(var=self.x, order=2)
+        d2_expr = d2_res.get("sympy_obj") if isinstance(d2_res, dict) and d2_res.get("success") else None
+        inflection_points = sp.solve(d2_expr, self.x) if d2_expr is not None else []
+
+        return {
+            "domain": str(domain),
+            "symmetry": symmetry,
+            "y_intercept": str(y_intercept),
+            "x_intercepts": [str(p) for p in x_intercepts],
+            "asymptote_pos_inf": lim_pos.get("text", "N/A") if isinstance(lim_pos, dict) else "N/A",
+            "asymptote_neg_inf": lim_neg.get("text", "N/A") if isinstance(lim_neg, dict) else "N/A",
+            "first_derivative": d1_res.get("text", "") if isinstance(d1_res, dict) else "",
+            "critical_points": [str(cp) for cp in critical_points],
+            "second_derivative": d2_res.get("text", "") if isinstance(d2_res, dict) else "",
+            "inflection_points": [str(ip) for ip in inflection_points],
+            "success": True
+        }
+
+    @safe_step
+    def investigate_2d(self) -> Dict[str, Any]:
+        return self.local_extrema_2d()
+
+    @safe_step
     def local_extrema_2d(self) -> Dict[str, Any]:
         fx, fy = self.get_gradient_2d()
         critical_points = sp.solve([fx, fy], (self.x, self.y), dict=True)

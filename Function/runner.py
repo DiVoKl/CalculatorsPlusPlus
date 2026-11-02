@@ -1,93 +1,72 @@
+import sympy as sp
 from Function.Series import Series
 from Function.Vectors3D import Vectors3D
 from Function.FInvestigator import FInvestigator
 from Function.Integrals import Integrals
 from Function.DiffEq import DiffEq
-import sympy as sp
 
-def run_calculus2_checks():
+
+def run_edge_case_checks():
     print("==================================================")
-    print("          CALCULUS 2 MODULES - TEST RUNNER        ")
+    print("         CALCULUS 2 EDGE CASES TEST RUNNER        ")
     print("==================================================\n")
 
-    # --- STEP 1: Infinite Series & Power Series ---
-    print("--- 1. Testing Series (Taylor Expansion) ---")
-    series_engine = Series("exp(x)")
-    print(series_engine.calculate(order=5))
+    # --- 1. SERIES EDGE CASES ---
+    print("--- 1. Series: Taylor Expansion Around a Singularity ---")
+    # 1/x cannot be expanded around x=0 (Pole/Singularity)
+    s1 = Series("1 / x")
+    print(s1.taylor_expansion(center=0))
 
-    print("\n--- Testing Series (Convergence) ---")
-    series_convergence = Series("1 / (2**n)")
-    print(series_convergence.test_convergence())
+    print("\n--- 2. Series: Ratio Test Inconclusive (L = 1) ---")
+    # Harmonic series 1/n -> Limit of ratio is 1
+    s2 = Series("1 / n")
+    print(s2.test_convergence())
 
-    print("\n--- Testing Series (Radius & Interval) ---")
-    series_power = Series("(x**n) / factorial(n)")
-    print(series_power.radius_and_interval())
+    print("\n--- 3. Series: Zero Radius of Convergence (R = 0) ---")
+    # n! * x^n converges only at x = 0
+    s3 = Series("factorial(n) * x**n")
+    print(s3.radius_and_interval())
 
+    # --- 2. VECTORS 3D EDGE CASES ---
+    print("\n\n--- 4. Vectors3D: Parallel Vectors (Cross Product = 0) ---")
+    v1 = Vectors3D("0")
+    print(v1.vector_algebra(v1=[1, 2, 3], v2=[2, 4, 6]))
 
-    # --- STEP 2: 3D Vectors & Analytic Geometry ---
-    print("\n\n--- 2. Testing Vectors3D (Vector Algebra) ---")
-    geo_engine = Vectors3D("0") # Main expression unused for basic vectors
-    print(geo_engine.vector_algebra(v1=[1, 2, 3], v2=[4, 5, 6], v3=[7, 8, 9]))
+    print("\n--- 5. Vectors3D: Degenerate Plane (Zero Normal Vector) ---")
+    # Normal vector [0, 0, 0] produces 0 = 0
+    print(v1.plane_equation(point=[1, 1, 1], normal=[0, 0, 0]))
 
-    print("\n--- Testing Vectors3D (Line and Plane) ---")
-    print(geo_engine.plane_equation(point=[1, 1, 1], normal=[2, -1, 3]))
-    print(geo_engine.line_equation(point=[0, 0, 0], direction=[1, 2, 3]))
+    # --- 3. FINEVESTIGATOR EDGE CASES ---
+    print("\n\n--- 6. FInvestigator: Saddle Point (Hessian Det < 0) ---")
+    # f(x,y) = x^2 - y^2 has a saddle point at (0,0)
+    f1 = FInvestigator("x**2 - y**2")
+    print(f1.local_extrema_2d())
 
-    print("\n--- Testing Vectors3D (Level Surfaces) ---")
-    surface_engine = Vectors3D("x**2 + y**2")
-    print(surface_engine.level_surface(C=4))
+    print("\n--- 7. FInvestigator: Inconclusive Hessian (Hessian Det = 0) ---")
+    # f(x,y) = x^4 + y^4 has f_xx*f_yy - f_xy^2 = 0 at (0,0)
+    f2 = FInvestigator("x**4 + y**4")
+    print(f2.local_extrema_2d())
 
+    # --- 4. INTEGRALS EDGE CASES ---
+    print("\n\n--- 8. Integrals: Singular / Improper Double Integral ---")
+    # 1/(x*y) integrated from 0 to 1 causes division by zero / log(0)
+    integ = Integrals("1 / (x * y)")
+    print(
+        integ.double_integral(
+            inner_var="x",
+            inner_lower="0",
+            inner_upper="1",
+            outer_var="y",
+            outer_lower="0",
+            outer_upper="1",
+        )
+    )
 
-    # --- STEP 4: Extrema & Function Analysis (Multivariable) ---
-    print("\n\n--- 4. Testing FInvestigator (Local Extrema via Hessian) ---")
-    extrema_engine = FInvestigator("x**2 + y**2")
-    print(extrema_engine.local_extrema_2d())
-
-    print("\n--- Testing FInvestigator (Lagrange Multipliers) ---")
-    # Maximize f(x,y) = x*y subject to constraint x + y - 10 = 0
-    lagrange_engine = FInvestigator("x * y")
-    print(lagrange_engine.lagrange_multipliers("x + y - 10"))
-
-    print("\n--- Testing FInvestigator (Absolute Extrema on Closed Domain) ---")
-    # Absolute max/min of f(x,y) = x^2 + y^2 - x - y on closed disk x^2 + y^2 <= 1
-    domain_engine = FInvestigator("x**2 + y**2 - x - y")
-    print(domain_engine.absolute_extrema("x**2 + y**2 - 1"))
-
-
-    # --- STEP 5: Double Integrals & Applications ---
-    print("\n\n--- 5. Testing Integrals (Double Integral - Volume) ---")
-    integ_engine = Integrals("x * y")
-    print(integ_engine.double_integral(inner_var="x", inner_lower="0", inner_upper="2",
-                                       outer_var="y", outer_lower="0", outer_upper="1"))
-
-    print("\n--- Testing Integrals (Area of General Domain) ---")
-    print(integ_engine.area_2d(inner_var="y", inner_lower="x**2", inner_upper="x",
-                               outer_var="x", outer_lower="0", outer_upper="1"))
-
-    print("\n--- Testing Integrals (Polar Double Integral) ---")
-    polar_engine = Integrals("exp(-(x**2 + y**2))")
-    print(polar_engine.polar_double_integral(r_lower="0", r_upper="R", theta_lower="0", theta_upper="2*pi"))
-
-    print("\n--- Testing Integrals (Center of Mass) ---")
-    com_engine = Integrals("0")
-    print(com_engine.center_of_mass(density_str="x + y",
-                                    inner_var="x", inner_lower="0", inner_upper="1",
-                                    outer_var="y", outer_lower="0", outer_upper="1"))
-
-
-    # --- STEP 6: Differential Equations ---
-    print("\n\n--- 6. Testing DiffEq (Separable ODE without Initial Condition) ---")
-    ode_engine = DiffEq("x * y")
-    print(ode_engine.solve_separable())
-
-    print("\n--- Testing DiffEq (Separable ODE with Initial Condition) ---")
-    ode_engine_ic = DiffEq("x * y")
-    x_sym = sp.Symbol('x')
-    f_sym = sp.Function('f')(x_sym)
-    ic = {f_sym.subs(x_sym, 0): 2}
-    print(ode_engine_ic.solve_separable(initial_condition=ic))
-    print("\n==================================================")
-
+    # --- 5. DIFFERENTIAL EQUATIONS EDGE CASES ---
+    print("\n\n--- 9. DiffEq: Non-Separable Differential Equation ---")
+    # dy/dx = x + y cannot be solved by separation of variables
+    ode = DiffEq("x + y")
+    print(ode.solve_ode())  # <--- Change this from solve_separable()
 
 if __name__ == "__main__":
-    run_calculus2_checks()
+    run_edge_case_checks()
