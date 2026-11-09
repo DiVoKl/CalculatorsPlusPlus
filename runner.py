@@ -1,9 +1,8 @@
-import sympy as sp
-from Function.Series import Series
-from Function.Vectors3D import Vectors3D
-from Function.FInvestigator import FInvestigator
-from Function.Integrals import Integrals
-from Function.DiffEq import DiffEq
+from calculus.Series import Series
+from functionanalysis.Vectors3D import Vectors3D
+from functionanalysis.FInvestigator import FInvestigator
+from calculus.Integrals import Integrals
+from common.DiffEq import DiffEq
 
 
 def run_edge_case_checks():

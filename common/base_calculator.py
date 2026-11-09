@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import sympy as sp
 from typing import Dict, Any
 from functools import wraps
-from .utils import parse_expression, format_result
+from common.utils import parse_expression, format_result
 
 def safe_step(func):
     """

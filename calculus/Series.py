@@ -1,6 +1,6 @@
 import sympy as sp
 from typing import Dict, Any
-from .base_calculator import BaseCalculator, safe_step
+from common.base_calculator import BaseCalculator, safe_step
 
 
 class Series(BaseCalculator):

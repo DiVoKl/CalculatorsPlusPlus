@@ -1,9 +1,9 @@
 import sympy as sp
 from typing import Dict, Any
 from sympy.calculus.util import continuous_domain
-from .base_calculator import BaseCalculator, safe_step
-from .Differentiation import Differentiation
-from .Limits import Limits
+from common.base_calculator import BaseCalculator, safe_step
+from calculus.Differentiation import Differentiation
+from calculus.Limits import Limits
 
 
 class FInvestigator(BaseCalculator):

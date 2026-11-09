@@ -1,9 +1,9 @@
 import sympy as sp
 from sympy.calculus.util import continuous_domain
 from typing import Dict, Any
-from .base_calculator import BaseCalculator
-from .Differentiation import Differentiation
-from .Limits import Limits
+from common.base_calculator import BaseCalculator
+from calculus.Differentiation import Differentiation
+from calculus.Limits import Limits
 
 class Fanalyser(BaseCalculator):
     def __init__(self, expr_str: str, symbols_str: str = "x y z t"):

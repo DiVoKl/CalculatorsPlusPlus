@@ -1,6 +1,5 @@
 import sympy as sp
-from typing import Dict, Any
-from .base_calculator import BaseCalculator
+from common.base_calculator import BaseCalculator
 
 class Differentiation(BaseCalculator):
     def calculate(self, var=None, order: int = 1):
